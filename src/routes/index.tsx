@@ -1,9 +1,15 @@
 import { createBrowserRouter } from "react-router";
+import Providers from "@/components/common/providers";
 
 const router = createBrowserRouter([
 	{
-		path: "/",
-		element: <div>Home</div>,
+		element: <Providers />,
+		children: [
+			{
+				index: true,
+				element: <div>Home</div>,
+			},
+		],
 	},
 ]);
 
