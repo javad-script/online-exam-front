@@ -1,5 +1,7 @@
 import { createBrowserRouter } from "react-router";
 import Providers from "@/components/common/providers";
+import { Button } from "@/components/ui/button";
+import { useAuth } from "@/stores/auth.store";
 
 const router = createBrowserRouter([
 	{
@@ -7,7 +9,7 @@ const router = createBrowserRouter([
 		children: [
 			{
 				index: true,
-				element: <div>Home</div>,
+				element: <Button onClick={() => useAuth.getState().openAuthModal()}>login</Button>,
 			},
 		],
 	},
