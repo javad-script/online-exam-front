@@ -13,7 +13,7 @@ export const otpRequestSchema = z.object({
 export type TOtpRequest = z.infer<typeof otpRequestSchema>;
 
 export const otpResponseSchema = getApiResponseSchema(
-	z.object({ remaining_seconds: z.number(), debug_otp: z.string() }),
+	z.object({ remaining_seconds: z.number(), mobile: z.string() }),
 );
 
 export type TOtpResponse = z.infer<typeof otpResponseSchema>;

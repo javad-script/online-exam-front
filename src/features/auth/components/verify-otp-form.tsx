@@ -1,50 +1,40 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useCountDown } from "@reactuses/core";
 import { REGEXP_ONLY_DIGITS_AND_CHARS } from "input-otp";
-import { useEffect } from "react";
+import { GalleryVerticalEndIcon, RefreshCcwIcon } from "lucide-react";
+import { useEffect, useTransition } from "react";
 import { Controller, useForm } from "react-hook-form";
-import { useNavigate } from "react-router";
+import { Link, useNavigate, useSearchParams } from "react-router";
 import { Button } from "@/components/ui/button";
-import {
-	DialogContent,
-	DialogDescription,
-	DialogFooter,
-	DialogHeader,
-	DialogTitle,
-} from "@/components/ui/dialog";
+import { Field, FieldDescription, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { InputOTP, InputOTPGroup, InputOTPSlot } from "@/components/ui/input-otp";
-import { useAuth } from "@/stores/auth.store";
 import { useOtpMutation } from "../hooks/use-otp.mutation";
-// import { useOtpMutation } from "../hooks/use-otp.mutation";
+import { useOtpCountdown } from "../hooks/use-otp-countdown";
 import { useVerifyOtp } from "../hooks/use-verify-otp.mutation";
+import { useAuth } from "../stores/auth.store";
 import {
 	type TVerifyOtpRequest,
 	verifyOtpRequestSchema,
 } from "../validations/verify-otp.validation";
 
 export function VerifyOtpForm() {
-	const expiresAt = useAuth((s) => s.expiresAt);
-	const startTimer = useAuth((s) => s.startTimer);
+	const [searchParams] = useSearchParams();
+	const mobile = searchParams.get("mobile");
+	const setOtpBlockExpireTime = useAuth((s) => s.setOtpBlockExpireTime);
 	const navigate = useNavigate();
 	const setToken = useAuth((s) => s.setToken);
 	const otpMutation = useOtpMutation(({ data }) => {
-		startTimer(data.remaining_seconds);
-	});
-
-	const target = Date.now() + expiresAt;
-	const diffInSec = Math.ceil((target - Date.now()) / 1000);
-	const [second] = useCountDown(diffInSec);
-	const mutation = useVerifyOtp(({ data }) => {
+		setOtpBlockExpireTime(data.remaining_seconds);
 		reset();
-		setAuthStep("otp");
-		closeAuthModal();
-		navigate("/dashboard");
+	});
+	const verifyMutation = useVerifyOtp(({ data }) => {
+		reset();
+		navigate("/");
 		setToken(data.token);
 	});
 
-	const setAuthStep = useAuth((s) => s.setStep);
-	const storedMobile = useAuth((s) => s.mobile);
-	const closeAuthModal = useAuth((s) => s.closeAuthModal);
+	const expiresAt = useAuth((s) => s.otpBlockExpireTime);
+
+	const second = useOtpCountdown(expiresAt.getTime());
 
 	const {
 		handleSubmit,
@@ -56,83 +46,123 @@ export function VerifyOtpForm() {
 		resolver: zodResolver(verifyOtpRequestSchema),
 		mode: "onSubmit",
 		defaultValues: {
-			mobile: storedMobile,
+			mobile,
 		},
 	});
 	useEffect(() => setFocus("code"), [setFocus]);
 
 	const onSubmit = async (data: TVerifyOtpRequest) => {
-		await mutation.mutateAsync(data);
+		await verifyMutation.mutateAsync(data);
 	};
 
-	const handleChangeNumber = () => {
-		setAuthStep("otp");
-	};
+	const [isResendPending, startResendTransition] = useTransition();
 
-	const handleResend = () => {
-		otpMutation.mutateAsync({ mobile: storedMobile });
-	};
+	const handleResend = () =>
+		startResendTransition(async () => {
+			await otpMutation.mutateAsync({ mobile });
+			setFocus("code");
+		});
+
+	if (!mobile) navigate("/auth/request");
 
 	return (
-		<DialogContent>
-			<DialogHeader>
-				<DialogTitle className="text-lg">ورود و ثبت نام</DialogTitle>
-				<DialogDescription>لطفا کد ارسال شده به {storedMobile} را وارد کنید</DialogDescription>
-			</DialogHeader>
-			<div className="flex w-full flex-col items-center justify-center gap-4" dir="ltr">
-				<Controller
-					control={control}
-					name="code"
-					render={({ field }) => (
-						<InputOTP
-							maxLength={4}
-							onBlur={field.onBlur}
-							onChange={field.onChange}
-							pattern={REGEXP_ONLY_DIGITS_AND_CHARS}
-							value={field.value}
+		<div className="flex flex-col gap-6">
+			<form onSubmit={handleSubmit(onSubmit)}>
+				<FieldGroup>
+					<div className="flex flex-col items-center gap-2 text-center">
+						<Link className="flex flex-col items-center gap-2 font-medium" to="#">
+							<div className="flex size-8 items-center justify-center rounded-md">
+								<GalleryVerticalEndIcon className="size-6" />
+							</div>
+							<span className="sr-only">سامانه آزمون آنلاین</span>
+						</Link>
+
+						<h1 className="text-xl font-bold">تأیید کد</h1>
+
+						<FieldDescription>
+							کد ارسال شده به شماره <span dir="ltr">{mobile}</span> را وارد کنید.
+						</FieldDescription>
+					</div>
+
+					<Field>
+						<FieldLabel className="flex w-full justify-between items-center">
+							<span>کد تأیید</span>
+							<Button
+								className="flex items-center gap-1 "
+								disabled={second > 0 || isResendPending}
+								onClick={handleResend}
+								type="button"
+								variant="link"
+							>
+								{isResendPending ? (
+									<span>در حال ارسال</span>
+								) : (
+									<>
+										{second < 1 && <RefreshCcwIcon />}
+										ارسال مجدد کد
+										{second > 0 && ` (${second})`}
+									</>
+								)}
+							</Button>
+						</FieldLabel>
+
+						<div className="flex justify-center" dir="ltr">
+							<Controller
+								control={control}
+								name="code"
+								render={({ field }) => (
+									<InputOTP
+										maxLength={4}
+										onBlur={field.onBlur}
+										onChange={field.onChange}
+										pattern={REGEXP_ONLY_DIGITS_AND_CHARS}
+										value={field.value}
+									>
+										<InputOTPGroup>
+											<InputOTPSlot className="text-xl size-10" index={0} />
+											<InputOTPSlot className="text-xl size-10" index={1} />
+											<InputOTPSlot className="text-xl size-10" index={2} />
+											<InputOTPSlot className="text-xl size-10" index={3} />
+										</InputOTPGroup>
+									</InputOTP>
+								)}
+							/>
+						</div>
+
+						{errors.code && (
+							<p className="text-sm text-red-700 opacity-65">{errors.code.message}</p>
+						)}
+					</Field>
+
+					<Field>
+						<Button
+							className="w-full"
+							disabled={isSubmitting}
+							onClick={handleSubmit(onSubmit)}
+							size={"lg"}
+							type="submit"
 						>
-							<InputOTPGroup>
-								<InputOTPSlot className="text-xl size-10" index={0} />
-								<InputOTPSlot className="text-xl size-10" index={1} />
-								<InputOTPSlot className="text-xl size-10" index={2} />
-								<InputOTPSlot className="text-xl size-10" index={3} />
-							</InputOTPGroup>
-						</InputOTP>
-					)}
-				/>
-				{errors.code && <p className="text-sm text-red-700 opacity-65">{errors.code.message}</p>}
-			</div>
-			<DialogFooter className="sm:justify-start" dir="ltr">
-				<Button
-					className="h-10 flex-1 rounded px-8 py-2 text-lg font-bold text-white"
-					disabled={isSubmitting}
-					onClick={handleSubmit(onSubmit)}
-					size={"lg"}
-					type="button"
-				>
-					{isSubmitting ? "صبر کنید ..." : "ادامه"}
-				</Button>
-				<Button
-					className="h-10 flex-1 rounded px-4 py-2 text-sm transition"
-					disabled={Number(second) > 0}
-					onClick={handleResend}
-					type="button"
-					variant="secondary"
-				>
-					ارسال مجدد کد {Number(second) >= 1 && `تا ${Number(second)}`}
-				</Button>
-			</DialogFooter>
-			<p>
-				<span>شماره همراه صحیح نیست؟</span>
-				<Button
-					className="text-r rounded px-4 py-2 text-sm text-emerald-900"
-					onClick={handleChangeNumber}
-					type="button"
-					variant={"link"}
-				>
-					<span>تغییر شماره</span>
-				</Button>
-			</p>
-		</DialogContent>
+							{isSubmitting ? "در حال بررسی..." : "ادامه"}
+						</Button>
+					</Field>
+
+					<Field className="flex flex-col gap-3">
+						<p className="text-sm space-x-2 mt-2">
+							<span>شماره همراه صحیح نیست؟</span>
+							<Link className="w-full" to={"/auth/request"}>
+								<span className="hover:underline underline-offset-4 text-primary ">
+									تغییر شماره
+								</span>
+							</Link>
+						</p>
+					</Field>
+				</FieldGroup>
+			</form>
+
+			<FieldDescription className="px-6 text-center">
+				کد تأیید معمولاً ظرف چند ثانیه ارسال می‌شود. در صورت عدم دریافت، از گزینه ارسال مجدد استفاده
+				کنید.
+			</FieldDescription>
+		</div>
 	);
 }

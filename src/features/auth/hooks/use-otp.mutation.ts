@@ -1,9 +1,10 @@
 import { useMutation } from "@tanstack/react-query";
 import { AxiosError } from "axios";
 import { toast } from "sonner";
-import otpApi from "../api/otp.api";
+import otpApi from "../api/request-otp.api";
+import type { TOtpResponse } from "../validations/otp.validation";
 
-export function useOtpMutation(onSuccess?: (data) => void) {
+export function useOtpMutation(onSuccess?: (data: TOtpResponse) => void) {
 	return useMutation({
 		mutationFn: otpApi,
 

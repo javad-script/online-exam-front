@@ -2,10 +2,11 @@ import { api } from "@/lib/axios";
 import { otpResponseSchema, type TOtpRequest } from "../validations/otp.validation";
 
 const otpApi = async (payload: TOtpRequest) => {
-	console.log(payload);
-	const { data } = await api.post("/api/auth/otp", JSON.stringify(payload));
+	const { data } = await api.post("/api/auth/otp", payload);
 
+	// TODO : remove this
 	await new Promise((resolve) => setTimeout(resolve, 1000));
+	alert(data.data.debug_otp);
 	return await otpResponseSchema.parseAsync(data);
 };
 

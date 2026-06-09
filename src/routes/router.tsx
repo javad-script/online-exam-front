@@ -1,17 +1,10 @@
-import { createBrowserRouter, Navigate, type RouteObject } from "react-router";
-import Providers from "@/components/common/providers";
+import { createBrowserRouter, type RouteObject } from "react-router";
+import Providers from "@/app/providers";
 import RootLayout from "@/components/layouts/root-layout";
-import { authRoutes } from "./auth.routes";
+import { authRoutes } from "@/features/auth/routes";
 import { dashboardRoutes } from "./dashboard.routes";
+import { notfound } from "./notfound.routes";
 
-const other: RouteObject = {
-	path: "*",
-	element: <Navigate replace to="/404" />,
-};
-const notFound: RouteObject = {
-	path: "/404",
-	element: <span>not found</span>,
-};
 const exam: RouteObject = {
 	path: "/e/:examId",
 	element: <span>exam id</span>,
@@ -23,7 +16,7 @@ const router = createBrowserRouter([
 		children: [
 			{
 				element: <RootLayout />,
-				children: [...dashboardRoutes, ...authRoutes, exam, notFound, other],
+				children: [...dashboardRoutes, ...authRoutes, exam, ...notfound],
 			},
 		],
 	},
