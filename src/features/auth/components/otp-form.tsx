@@ -1,5 +1,3 @@
-"use client";
-
 import { zodResolver } from "@hookform/resolvers/zod";
 import { PhoneIcon } from "lucide-react";
 import { useEffect } from "react";

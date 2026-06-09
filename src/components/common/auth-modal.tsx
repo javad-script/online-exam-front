@@ -1,6 +1,5 @@
-"use client";
-
-import { RequestOtpForm } from "@/features/auth/request-otp";
+import { RequestOtpForm } from "@/features/auth";
+import { VerifyOtpForm } from "@/features/auth/components/verify-otp-form";
 import { useAuth } from "@/stores/auth.store";
 import { Dialog } from "../ui/dialog";
 
@@ -11,6 +10,7 @@ export default function AuthModal() {
 	return (
 		<Dialog onOpenChange={closeAuthModal} open={isAuthModalOpen}>
 			{authStep === "otp" && <RequestOtpForm />}
+			{authStep === "verify" && <VerifyOtpForm />}
 		</Dialog>
 	);
 }

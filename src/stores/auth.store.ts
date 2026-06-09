@@ -12,6 +12,9 @@ type TAuth = {
 	isAuthModalOpen: boolean;
 	openAuthModal: () => void;
 	closeAuthModal: () => void;
+	expiresAt: number | null;
+	startTimer: (expiresAt: number) => void;
+	clearTimer: () => void;
 };
 
 export const useAuth = create<TAuth>()(
@@ -27,6 +30,9 @@ export const useAuth = create<TAuth>()(
 			isAuthModalOpen: false,
 			openAuthModal: () => set({ isAuthModalOpen: true }),
 			closeAuthModal: () => set({ isAuthModalOpen: false }),
+			expiresAt: null,
+			startTimer: (exp: number) => set({ expiresAt: exp }),
+			clearTimer: () => set({ expiresAt: null }),
 		}),
 		{ name: "auth" },
 	),

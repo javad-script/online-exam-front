@@ -1,17 +1,16 @@
 import { useMutation } from "@tanstack/react-query";
 import { AxiosError } from "axios";
 import { toast } from "sonner";
-import otpApi from "../api/otp.api";
+import { verifyOtpApi } from "../api/verify-otp.api";
+import type { TVerifyOtpResponse } from "../validations/verify-otp.validation";
 
-export function useOtpMutation(onSuccess?: (data) => void) {
+export const useVerifyOtp = (onSuccess?: (data: TVerifyOtpResponse) => void) => {
 	return useMutation({
-		mutationFn: otpApi,
-
+		mutationFn: verifyOtpApi,
 		onSuccess: (data) => {
-			toast.success("کد تایید برای شما ارسال شد");
+			toast.success("خوش آمدید");
 			onSuccess?.(data);
 		},
-
 		onError: (error) => {
 			if (error instanceof AxiosError) {
 				toast.error(error.response?.data?.message);
@@ -21,4 +20,4 @@ export function useOtpMutation(onSuccess?: (data) => void) {
 			toast.error(error instanceof Error ? error.message : "خطایی رخ داد");
 		},
 	});
-}
+};
