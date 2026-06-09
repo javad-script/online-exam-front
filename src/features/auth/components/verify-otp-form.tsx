@@ -1,6 +1,6 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { REGEXP_ONLY_DIGITS_AND_CHARS } from "input-otp";
-import { GalleryVerticalEndIcon, RefreshCcwIcon } from "lucide-react";
+import { RefreshCcwIcon } from "lucide-react";
 import { useEffect, useTransition } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { Link, useNavigate, useSearchParams } from "react-router";
@@ -71,8 +71,8 @@ export function VerifyOtpForm() {
 				<FieldGroup>
 					<div className="flex flex-col items-center gap-2 text-center">
 						<Link className="flex flex-col items-center gap-2 font-medium" to="#">
-							<div className="flex size-8 items-center justify-center rounded-md">
-								<GalleryVerticalEndIcon className="size-6" />
+							<div className="flex size-12 mb-4 items-center justify-center rounded-md">
+								<img alt="." className="size-full rounded-full" src="/favicon.svg" />
 							</div>
 							<span className="sr-only">سامانه آزمون آنلاین</span>
 						</Link>

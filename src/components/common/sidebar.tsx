@@ -1,4 +1,4 @@
-import { BoxIcon, FilesIcon, LayoutDashboardIcon } from "lucide-react";
+import { FilesIcon, LayoutDashboardIcon } from "lucide-react";
 import type { ReactNode } from "react";
 import { Link } from "react-router";
 import { cn } from "@/lib/utils";
@@ -38,7 +38,7 @@ export default function Sidebar() {
 					className="border-foreground/25 flex h-18 w-full items-center gap-4 border-b px-4"
 					to={"/"}
 				>
-					<BoxIcon className="size-6" />
+					<img alt="." className="size-8 rounded-full" src="/favicon.svg" />
 					<h1 className="text-lg font-light">فرا آزمون</h1>
 				</Link>
 				<nav className="mt-10 flex w-full flex-col gap-2 px-4">
