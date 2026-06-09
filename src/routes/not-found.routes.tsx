@@ -1,4 +1,5 @@
 import { Navigate, type RouteObject } from "react-router";
+import NotFoundPage from "@/pages/not-found-page";
 
 const notFoundRedirect: RouteObject = {
 	path: "*",
@@ -6,6 +7,6 @@ const notFoundRedirect: RouteObject = {
 };
 const notFoundRoute: RouteObject = {
 	path: "/404",
-	element: <span>not found</span>,
+	element: <NotFoundPage />,
 };
 export const notfound = [notFoundRedirect, notFoundRoute];
