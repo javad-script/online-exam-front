@@ -1,4 +1,4 @@
-import { FilesIcon, LayoutDashboardIcon } from "lucide-react";
+import { FilesIcon, LandmarkIcon, LayoutDashboardIcon } from "lucide-react";
 import type { ReactNode } from "react";
 import { Link } from "react-router";
 import { cn } from "@/lib/utils";
@@ -20,6 +20,11 @@ const navItems = [
 		label: "آزمون ها",
 		href: "/exams",
 		icon: <FilesIcon className="size-4.5" />,
+	},
+	{
+		label: "بانک سوالات",
+		href: "/question-bank",
+		icon: <LandmarkIcon className="size-4.5" />,
 	},
 ] satisfies TNavItem[];
 

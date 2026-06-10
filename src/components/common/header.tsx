@@ -56,25 +56,35 @@ const ROUTE_BREADCRUMB: Record<string, { label: string; path: string }> = {
 
 function HeaderBreadcrumb() {
 	const location = useLocation();
-	const segments = location.pathname.slice(1).split("/");
+	const segments = location.pathname.split("/").filter(Boolean);
 	const lastIndex = segments.length - 1;
-
 	return (
 		<Breadcrumb>
 			<BreadcrumbList>
+				<BreadcrumbLink
+					className="text-base hover:text-foreground transition-colors text-foreground/70"
+					to={ROUTE_BREADCRUMB.dashboard.path}
+				>
+					{ROUTE_BREADCRUMB.dashboard.label}
+				</BreadcrumbLink>
 				{segments.map((segment, index) => {
 					const route = ROUTE_BREADCRUMB[segment];
 					if (!route) return null;
 
 					const isLast = index === lastIndex;
+					const isFirst = index === 0;
 
 					return (
 						<Fragment key={segment}>
+							{isFirst && <BreadcrumbSeparator />}
 							<BreadcrumbItem>
 								{isLast ? (
 									<BreadcrumbPage className="text-base">{route.label}</BreadcrumbPage>
 								) : (
-									<BreadcrumbLink className="text-base" href={route.path}>
+									<BreadcrumbLink
+										className="text-base hover:text-foreground text-foreground/70 transition-colors"
+										to={route.path}
+									>
 										{route.label}
 									</BreadcrumbLink>
 								)}
