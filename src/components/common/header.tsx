@@ -1,6 +1,6 @@
 "use client";
 
-import { BellIcon, PlusIcon, SidebarIcon } from "lucide-react";
+import { BellIcon, PlusIcon, SidebarIcon, User2Icon } from "lucide-react";
 import { Fragment } from "react";
 import { useLocation } from "react-router";
 import {
@@ -14,10 +14,20 @@ import {
 import { Button } from "@/components/ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Separator } from "@/components/ui/separator";
+import { useAuth } from "@/features/auth/stores/auth.store";
 import { sidebarStore } from "@/stores/sidebar.store";
+import { Avatar, AvatarFallback } from "../ui/avatar";
+import {
+	DropdownMenu,
+	DropdownMenuContent,
+	DropdownMenuGroup,
+	DropdownMenuItem,
+	DropdownMenuTrigger,
+} from "../ui/dropdown-menu";
 
 export default function Header() {
 	const openSidebar = sidebarStore((s) => s.openSidebar);
+	const logout = useAuth((s) => s.logout);
 
 	return (
 		<header className="border-foreground/25 bg-background fixed top-0 z-30 flex h-18 w-full items-center justify-between border-b px-4 transition-all duration-0 lg:right-64 lg:w-[calc(100vw-16rem)]">
@@ -25,8 +35,8 @@ export default function Header() {
 				<Button className="lg:hidden" onClick={openSidebar} size={"icon-lg"} variant={"ghost"}>
 					<SidebarIcon className="size-4.5" />
 				</Button>
-				<Separator className="my-auto h-6 lg:hidden" orientation={"vertical"} />
-				<HeaderBreadcrumb />
+				<Separator className="my-auto h-6 hidden lg:block" orientation={"vertical"} />
+				<HeaderBreadcrumb className="hidden lg:block" />
 			</div>
 
 			<div className="flex items-center gap-2">
@@ -44,6 +54,20 @@ export default function Header() {
 						list
 					</PopoverContent>
 				</Popover>
+				<DropdownMenu>
+					<DropdownMenuTrigger>
+						<Avatar className="size-10">
+							<AvatarFallback>
+								<User2Icon />
+							</AvatarFallback>
+						</Avatar>
+					</DropdownMenuTrigger>
+					<DropdownMenuContent sideOffset={24}>
+						<DropdownMenuGroup>
+							<DropdownMenuItem onClick={logout}>خروج از حساب</DropdownMenuItem>
+						</DropdownMenuGroup>
+					</DropdownMenuContent>
+				</DropdownMenu>
 			</div>
 		</header>
 	);
@@ -54,12 +78,12 @@ const ROUTE_BREADCRUMB: Record<string, { label: string; path: string }> = {
 	exams: { label: "آزمون‌ ها", path: "/exams" },
 };
 
-function HeaderBreadcrumb() {
+function HeaderBreadcrumb({ className }: { className?: string }) {
 	const location = useLocation();
 	const segments = location.pathname.split("/").filter(Boolean);
 	const lastIndex = segments.length - 1;
 	return (
-		<Breadcrumb>
+		<Breadcrumb className={className}>
 			<BreadcrumbList>
 				<BreadcrumbLink
 					className="text-base hover:text-foreground transition-colors text-foreground/70"
