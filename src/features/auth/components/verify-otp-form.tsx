@@ -1,9 +1,8 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { REGEXP_ONLY_DIGITS_AND_CHARS } from "input-otp";
 import { RefreshCcwIcon } from "lucide-react";
 import { useEffect, useTransition } from "react";
 import { Controller, useForm } from "react-hook-form";
-import { Link, useNavigate, useSearchParams } from "react-router";
+import { Link, useNavigate } from "react-router";
 import { Button } from "@/components/ui/button";
 import { Field, FieldDescription, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { InputOTP, InputOTPGroup, InputOTPSlot } from "@/components/ui/input-otp";
@@ -17,8 +16,7 @@ import {
 } from "../validations/verify-otp.validation";
 
 export function VerifyOtpForm() {
-	const [searchParams] = useSearchParams();
-	const mobile = searchParams.get("mobile");
+	const mobile = sessionStorage.getItem("mobile");
 	const setOtpBlockExpireTime = useAuth((s) => s.setOtpBlockExpireTime);
 	const navigate = useNavigate();
 	const setToken = useAuth((s) => s.setToken);
@@ -33,8 +31,8 @@ export function VerifyOtpForm() {
 	});
 
 	const expiresAt = useAuth((s) => s.otpBlockExpireTime);
-
-	const second = useOtpCountdown(expiresAt.getTime());
+	const otpBlockExpireTime = new Date(expiresAt);
+	const second = useOtpCountdown(otpBlockExpireTime.getTime());
 
 	const {
 		handleSubmit,
@@ -112,10 +110,13 @@ export function VerifyOtpForm() {
 								name="code"
 								render={({ field }) => (
 									<InputOTP
+										inputMode="numeric"
 										maxLength={4}
 										onBlur={field.onBlur}
-										onChange={field.onChange}
-										pattern={REGEXP_ONLY_DIGITS_AND_CHARS}
+										onChange={(val) => {
+											const onlyDigits = val.replace(/\D/g, "");
+											field.onChange(onlyDigits);
+										}}
 										value={field.value}
 									>
 										<InputOTPGroup>

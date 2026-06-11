@@ -16,7 +16,8 @@ export function RequestOtpForm() {
 	const mutation = useOtpMutation(({ data }) => {
 		reset();
 		setOtpBlockExpireTime(data.remaining_seconds);
-		navigate(`/auth/verify?mobile=${data.mobile}`);
+		sessionStorage.setItem("mobile", data.mobile);
+		navigate(`/auth/verify`);
 	});
 	const {
 		register,
