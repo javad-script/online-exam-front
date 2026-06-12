@@ -13,7 +13,6 @@ import {
 } from "@/components/ui/breadcrumb";
 import { Button } from "@/components/ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { Separator } from "@/components/ui/separator";
 import { useAuth } from "@/features/auth/stores/auth.store";
 import { sidebarStore } from "@/stores/sidebar.store";
 import { Avatar, AvatarFallback } from "../ui/avatar";
@@ -35,7 +34,6 @@ export default function Header() {
 				<Button className="lg:hidden" onClick={openSidebar} size={"icon-lg"} variant={"ghost"}>
 					<SidebarIcon className="size-4.5" />
 				</Button>
-				<Separator className="my-auto h-6 hidden lg:block" orientation={"vertical"} />
 				<HeaderBreadcrumb className="hidden lg:block" />
 			</div>
 
