@@ -1,8 +1,7 @@
-"use client";
-
-import { BellIcon, PlusIcon, SidebarIcon, User2Icon } from "lucide-react";
+import { BellIcon, SidebarIcon, User2Icon } from "lucide-react";
 import { Fragment } from "react";
 import { useLocation } from "react-router";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import {
 	Breadcrumb,
 	BreadcrumbItem,
@@ -12,24 +11,23 @@ import {
 	BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
 import { Button } from "@/components/ui/button";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { useAuth } from "@/features/auth/stores/auth.store";
-import { sidebarStore } from "@/stores/sidebar.store";
-import { Avatar, AvatarFallback } from "../ui/avatar";
 import {
 	DropdownMenu,
 	DropdownMenuContent,
 	DropdownMenuGroup,
 	DropdownMenuItem,
 	DropdownMenuTrigger,
-} from "../ui/dropdown-menu";
+} from "@/components/ui/dropdown-menu";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { useAuth } from "@/features/auth/stores/auth.store";
+import { sidebarStore } from "@/stores/sidebar.store";
 
 export default function Header() {
 	const openSidebar = sidebarStore((s) => s.openSidebar);
 	const logout = useAuth((s) => s.logout);
 
 	return (
-		<header className="border-foreground/25 bg-background fixed top-0 z-30 flex h-18 w-full items-center justify-between border-b px-4 transition-all duration-0 lg:right-64 lg:w-[calc(100vw-16rem)]">
+		<header className="border-foreground/25 bg-background sticky top-0 z-30 flex h-18 w-full px-4 items-center justify-between border-b transition-all duration-0 lg:right-64 lg:w-[calc(100vw-16rem)]">
 			<div className="flex items-center gap-2">
 				<Button className="lg:hidden" onClick={openSidebar} size={"icon-lg"} variant={"ghost"}>
 					<SidebarIcon className="size-4.5" />
@@ -38,9 +36,6 @@ export default function Header() {
 			</div>
 
 			<div className="flex items-center gap-2">
-				<Button className="flex items-center gap-1 rounded-md px-4 py-2">
-					<span>آزمون جدید</span> <PlusIcon className="size-4.5" />
-				</Button>
 				<Popover>
 					<PopoverTrigger>
 						<Button className="relative px-2 py-2" variant={"ghost"}>
@@ -73,6 +68,7 @@ export default function Header() {
 
 const ROUTE_BREADCRUMB: Record<string, { label: string; path: string }> = {
 	dashboard: { label: "داشبورد", path: "/" },
+	"question-bank": { label: "بانک سوالات", path: "/question-bank" },
 	exams: { label: "آزمون‌ ها", path: "/exams" },
 };
 
@@ -80,6 +76,7 @@ function HeaderBreadcrumb({ className }: { className?: string }) {
 	const location = useLocation();
 	const segments = location.pathname.split("/").filter(Boolean);
 	const lastIndex = segments.length - 1;
+
 	return (
 		<Breadcrumb className={className}>
 			<BreadcrumbList>
