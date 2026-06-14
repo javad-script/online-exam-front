@@ -108,7 +108,7 @@ export default function QuestionBankPage() {
 				</CardAction>
 			</CardHeader>
 			<CardContent>
-				<QuestionBankTable columns={columns} data={data} />
+				<QuestionBankTable columns={columns} data={data ?? []} />
 			</CardContent>
 		</Card>
 	);
