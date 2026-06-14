@@ -7,6 +7,13 @@ export const api = axios.create({
 	timeout: 1000 * 5,
 	headers: {
 		"Content-Type": "application/json",
-		Authorization: `Bearer ${useAuth.getState().token}`,
 	},
+});
+
+api.interceptors.request.use((config) => {
+	const token = useAuth.getState().token;
+	if (token) {
+		config.headers.Authorization = `Bearer ${token}`;
+	}
+	return config;
 });
