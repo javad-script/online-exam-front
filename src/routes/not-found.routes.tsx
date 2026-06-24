@@ -1,5 +1,5 @@
 import { Navigate, type RouteObject } from "react-router";
-import NotFoundPage from "@/pages/not-found-page";
+import NotFoundPage from "@/app/not-found.page";
 
 const notFoundRedirect: RouteObject = {
 	path: "*",

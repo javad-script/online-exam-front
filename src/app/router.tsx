@@ -3,7 +3,7 @@ import Providers from "@/app/providers";
 import RootLayout from "@/components/layouts/root-layout";
 import { authRoutes } from "@/features/auth/routes";
 import { dashboardRoutes } from "@/features/dashboard/routes";
-import { notfound } from "./not-found.routes";
+import { notfound } from "../routes/not-found.routes";
 
 const exam: RouteObject = {
 	path: "/e/:examId",

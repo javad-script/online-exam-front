@@ -1,13 +1,25 @@
 import { api } from "@/lib/axios";
-import { otpResponseSchema, type TOtpRequest } from "../validations/otp.validation";
+import {
+	otpResponseSchema,
+	type TOtpRequest,
+	type TOtpResponse,
+} from "../validations/request-otp.validation";
 
-const otpApi = async (payload: TOtpRequest) => {
-	const { data } = await api.post("/api/auth/otp", payload);
+const otpApi = async (payload: TOtpRequest): Promise<TOtpResponse> => {
+	const response = await api.post("/api/auth/otp", payload);
 
-	// TODO : remove this
-	await new Promise((resolve) => setTimeout(resolve, 1000));
-	alert(data.data.debug_otp);
-	return await otpResponseSchema.parseAsync(data);
+	const data = await otpResponseSchema.parseAsync(response.data);
+
+	if (!data.success) {
+		throw new Error(data.message);
+	}
+
+	// TODO : remove this alert
+	if (data.data.debug_otp) {
+		alert(data.data.debug_otp);
+	}
+
+	return data;
 };
 
 export default otpApi;

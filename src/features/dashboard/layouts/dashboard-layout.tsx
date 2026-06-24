@@ -1,8 +1,8 @@
 import { Suspense } from "react";
 import { Outlet } from "react-router";
-import { Spinner } from "../../../../components/ui/spinner";
-import Header from "../shared/header";
-import Sidebar from "../shared/sidebar";
+import { Spinner } from "@/components/ui/spinner";
+import Header from "../components/shared/header";
+import Sidebar from "../components/shared/sidebar";
 
 export default function DashboardLayout() {
 	return (

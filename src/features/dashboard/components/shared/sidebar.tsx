@@ -58,9 +58,11 @@ export default function Sidebar() {
 }
 
 export function NavItem({ href, icon, label }: { href: string; icon: ReactNode; label: string }) {
+	const closeSidebar = sidebarStore((s) => s.closeSidebar);
 	return (
 		<Link
 			className="hover:bg-muted flex h-full w-full items-center gap-2 rounded-lg px-2 py-2 transition"
+			onClick={closeSidebar}
 			to={href}
 		>
 			{icon}

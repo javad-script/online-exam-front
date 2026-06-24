@@ -1,7 +1,8 @@
 import type { RouteObject } from "react-router";
-import DashboardLayout from "@/features/dashboard/components/layouts/dashboard-layout";
 import ProtectedRoute from "@/routes/protected-route";
-import QuestionBankPage from "./features/question-bank/pages/question-bank-page";
+import QuestionBankSinglePage from "./features/question-bank/pages/question-bank.page";
+import QuestionBankPage from "./features/question-bank/pages/question-banks.page";
+import DashboardLayout from "./layouts/dashboard-layout";
 import MainPage from "./pages/main-page";
 
 export const dashboardRoutes: RouteObject[] = [
@@ -25,7 +26,7 @@ export const dashboardRoutes: RouteObject[] = [
 					},
 					{
 						path: "question-bank/:id",
-						element: <div>question-bank</div>,
+						element: <QuestionBankSinglePage />,
 					},
 				],
 			},

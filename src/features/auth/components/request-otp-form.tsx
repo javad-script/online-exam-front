@@ -6,17 +6,17 @@ import { Link, useNavigate } from "react-router";
 import { Button } from "@/components/ui/button";
 import { Field, FieldDescription, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { InputGroup, InputGroupAddon, InputGroupInput } from "@/components/ui/input-group";
-import { useOtpMutation } from "../hooks/use-otp.mutation";
+import { useOtpMutation } from "../hooks/use-request-otp.mutation";
 import { useAuth } from "../stores/auth.store";
-import { otpRequestSchema, type TOtpRequest } from "../validations/otp.validation";
+import { otpRequestSchema, type TOtpRequest } from "../validations/request-otp.validation";
 
 export function RequestOtpForm() {
 	const setOtpBlockExpireTime = useAuth((s) => s.setOtpBlockExpireTime);
 	const navigate = useNavigate();
-	const mutation = useOtpMutation(({ data }) => {
+	const mutation = useOtpMutation((res) => {
 		reset();
-		setOtpBlockExpireTime(data.remaining_seconds);
-		sessionStorage.setItem("mobile", data.mobile);
+		setOtpBlockExpireTime(res.data.remaining_seconds);
+		sessionStorage.setItem("mobile", res.data.mobile);
 		navigate(`/auth/verify`);
 	});
 	const {

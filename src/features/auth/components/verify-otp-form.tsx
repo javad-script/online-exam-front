@@ -6,8 +6,8 @@ import { Link, useNavigate } from "react-router";
 import { Button } from "@/components/ui/button";
 import { Field, FieldDescription, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { InputOTP, InputOTPGroup, InputOTPSlot } from "@/components/ui/input-otp";
-import { useOtpMutation } from "../hooks/use-otp.mutation";
 import { useOtpCountdown } from "../hooks/use-otp-countdown";
+import { useOtpMutation } from "../hooks/use-request-otp.mutation";
 import { useVerifyOtp } from "../hooks/use-verify-otp.mutation";
 import { useAuth } from "../stores/auth.store";
 import {

@@ -1,8 +1,9 @@
-import { useSuspenseQuery } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import type { ColumnDef } from "@tanstack/react-table";
 import { CopyPlusIcon, DoorOpenIcon, EditIcon, MoreHorizontalIcon } from "lucide-react";
-import { lazy } from "react";
+import { lazy, useEffect } from "react";
 import { Link, useNavigate } from "react-router";
+import { toast } from "sonner";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -23,9 +24,8 @@ import {
 	DropdownMenuSeparator,
 	DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { api } from "@/lib/axios";
-import type { TApiResponse } from "@/validations/api-response.validation";
-import { DeleteBankModal } from "../components/delete-modal";
+import { getQuestionBanks } from "../api/question-banks.api";
+import { DeleteBankModal } from "../components/question-bank-delete-modal";
 import { QuestionBankTable } from "../components/question-bank-table";
 import type { TQuestionBank } from "../types/question-bank.types";
 
@@ -85,15 +85,14 @@ export const columns: ColumnDef<TQuestionBank>[] = [
 ];
 
 export default function QuestionBankPage() {
-	const { data } = useSuspenseQuery({
+	const { data, error } = useQuery({
 		queryKey: ["question-banks"],
-		queryFn: async () => {
-			const res = await api.get<TApiResponse<TQuestionBank[]>>("/api/dashboard/banks");
-
-			return res.data.data;
-		},
-		staleTime: 10_000,
+		queryFn: getQuestionBanks,
+		staleTime: 1000 * 60,
 	});
+	useEffect(() => {
+		if (error) toast.error("خطا در دریافت اطلاعات");
+	}, [error]);
 
 	return (
 		<Card>
@@ -108,7 +107,7 @@ export default function QuestionBankPage() {
 				</CardAction>
 			</CardHeader>
 			<CardContent>
-				<QuestionBankTable columns={columns} data={data ?? []} />
+				<QuestionBankTable columns={columns} data={data?.data ?? []} />
 			</CardContent>
 		</Card>
 	);

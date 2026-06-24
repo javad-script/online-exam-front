@@ -58,7 +58,6 @@ export default function QuestionBankForm({
 	});
 
 	const submitHandler = async (data: TQuestionBankForm) => {
-		console.log(data);
 		await createMutation.mutateAsync(data);
 		callback();
 	};
