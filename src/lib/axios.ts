@@ -1,6 +1,7 @@
 import axios from "axios";
 import { useAuth } from "@/features/auth/stores/auth.store";
 import env from "./env";
+import { notFound } from "./utils";
 
 export const api = axios.create({
 	baseURL: env.VITE_API_URL,
@@ -25,6 +26,9 @@ api.interceptors.response.use((response) => {
 	if (response.status === 401) {
 		useAuth.getState().logout();
 		window.location.href = "/auth/request";
+	}
+	if (response.status === 404) {
+		notFound();
 	}
 
 	return response;

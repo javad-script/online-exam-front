@@ -2,18 +2,11 @@ import { useQuery } from "@tanstack/react-query";
 import type { ColumnDef } from "@tanstack/react-table";
 import { CopyPlusIcon, EditIcon, EyeIcon, MoreHorizontalIcon } from "lucide-react";
 import { useEffect, useState } from "react";
-import { Link, useNavigate, useParams } from "react-router";
+import { Link, useNavigate } from "react-router";
 import { toast } from "sonner";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import {
-	Card,
-	CardAction,
-	CardContent,
-	CardDescription,
-	CardHeader,
-	CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import {
 	DropdownMenu,
 	DropdownMenuContent,
@@ -25,57 +18,77 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Spinner } from "@/components/ui/spinner";
 import { ReTable } from "@/features/dashboard/components/shared/re-table";
-import { questionTypes } from "../../exam/validations/new-exam.validation";
-import { getBankQuestions } from "../api/bank-questions.api";
-import { DeleteQuestionModal } from "../components/question-delete-modal";
-import type { TQuestion } from "../types/question.types";
-import NewQuestionPage from "./new-question.page";
+import { getResults } from "../api/results.api";
+import { ExamDeleteModal } from "../components/result-delete-modal";
+import type { TExam } from "../types/exam.types";
 
 const colHeaders = {
-	content: "متن سوال",
-	type: "نوع",
+	title: "عنوان",
+	status: "وضعیت",
+	description: "نوع",
+	duration_minutes: "مدت",
+	show_result: "نمایش نتیجه",
+	show_correct_answers: "نمایش پاسخ صحیح",
+	random_questions: "سوالات تصادفی",
+	random_options: "گزینه های تصادفی",
+	published_at: "تاریخ انتشار",
 };
 
-export const columns: ColumnDef<TQuestion>[] = [
+export const columns: ColumnDef<TExam>[] = [
 	{
-		accessorKey: "type",
-		header: () => <div className="text-right">نوع</div>,
+		accessorKey: "title",
+		header: "عنوان",
 		cell: ({ row }) => {
-			const value: keyof typeof questionTypes = row.getValue("type");
+			return (
+				<Link className="text-right" to={`./${row.id}/edit`}>
+					{row.getValue("title")}
+				</Link>
+			);
+		},
+	},
+	{
+		accessorKey: "description",
+		header: "توضیحات",
+	},
+	{
+		accessorKey: "duration_minutes",
+		header: "مدت",
+		cell: ({ row }) => `${row.getValue("duration_minutes")}  دقیقه`,
+	},
+	{
+		accessorKey: "status",
+		header: () => <div className="text-right">وضعیت</div>,
+		cell: ({ row }) => {
+			const value: keyof typeof examStatus = row.getValue("status");
 
 			return (
-				<Badge className="text-right font-medium" variant={"secondary"}>
-					{questionTypes[value] ?? "ناشناخته"}
+				<Badge
+					className="text-right font-medium"
+					variant={value === "draft" ? "secondary" : "default"}
+				>
+					{examStatus[value] ?? "ناشناخته"}
 				</Badge>
 			);
 		},
 	},
 	{
-		accessorKey: "content",
-		header: "متن سوال",
-		cell: ({ row }) => {
-			return (
-				<Link className="text-right" to={`#`}>
-					{row.getValue("content")}
-				</Link>
-			);
-		},
-	},
-
-	{
 		id: "actions",
 		header: () => <div className="text-right">عملیات</div>,
-		cell: ({ row }) => <QuestionActions row={row.original} />,
+		cell: ({ row }) => <ExamActions row={row.original} />,
 	},
 ];
 
-export default function QuestionBankSinglePage() {
-	const { id } = useParams();
+export const examStatus = {
+	draft: "پیش نویس",
+	published: "انتشار شده",
+	closed: "پایان یافته",
+} as const;
+
+export default function ExamsPage() {
 	const { data, error, isLoading } = useQuery({
-		queryKey: ["bank-questions", id],
-		queryFn: () => getBankQuestions(id as string),
+		queryKey: ["results"],
+		queryFn: () => getResults(),
 		staleTime: 1000 * 60,
-		enabled: id !== undefined,
 	});
 	useEffect(() => {
 		if (error) toast.error("خطا در دریافت اطلاعات");
@@ -83,18 +96,15 @@ export default function QuestionBankSinglePage() {
 	return (
 		<Card>
 			<CardHeader>
-				<CardTitle className="text-lg">سوالات بانک</CardTitle>
-				<CardDescription>می توانید سوالات رو در بانک های سوال مدیریت کنید</CardDescription>
-				<CardAction>
-					<NewQuestionPage />
-				</CardAction>
+				<CardTitle className="text-lg">آزمون های پایان یافته</CardTitle>
+				<CardDescription>می توانید آزمون های پایان یافته را مدیریت کنید</CardDescription>
 			</CardHeader>
 			<CardContent>
 				<ReTable
 					colHeaders={colHeaders}
 					columns={columns}
 					config={{
-						search: { placeholder: "جستجو در سوالات", enabled: true, column: "content" },
+						search: { placeholder: "جستجو", enabled: true, column: "title" },
 						pagination: true,
 						select: false,
 						visibility: true,
@@ -107,13 +117,12 @@ export default function QuestionBankSinglePage() {
 	);
 }
 
-type QuestionBankActionsProps = {
-	row: TQuestion;
+type ExamActionsProps = {
+	row: TExam;
 };
 
-export function QuestionActions({ row }: QuestionBankActionsProps) {
+export function ExamActions({ row }: ExamActionsProps) {
 	const [open, setOpen] = useState(false);
-
 	const navigate = useNavigate();
 
 	return (
@@ -125,14 +134,14 @@ export function QuestionActions({ row }: QuestionBankActionsProps) {
 			</DropdownMenuTrigger>
 
 			<DropdownMenuContent align="end">
-				<DropdownMenuGroup>
+				<DropdownMenuGroup onClick={() => setOpen(false)}>
 					<DropdownMenuLabel>عملیات</DropdownMenuLabel>
 
 					<DropdownMenuItem onClick={() => navigate(`${row.id}`)}>
 						<EyeIcon />
 						مشاهده
 					</DropdownMenuItem>
-					<DropdownMenuItem onClick={() => navigate(`#`)}>
+					<DropdownMenuItem onClick={() => navigate(`./${row.id}/edit`)}>
 						<EditIcon />
 						ویرایش
 					</DropdownMenuItem>
@@ -143,7 +152,7 @@ export function QuestionActions({ row }: QuestionBankActionsProps) {
 					</DropdownMenuItem>
 
 					<DropdownMenuSeparator />
-					<DeleteQuestionModal row={row} />
+					<ExamDeleteModal row={row} />
 				</DropdownMenuGroup>
 			</DropdownMenuContent>
 		</DropdownMenu>

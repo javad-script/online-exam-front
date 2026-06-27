@@ -9,7 +9,7 @@ export default function DashboardLayout() {
 		<div className="flex h-auto">
 			<Sidebar />
 
-			<main className="relative flex-1 ">
+			<main className="relative flex-1 overflow-x-hidden">
 				<Header />
 				<div className="px-4 pt-4">
 					<Suspense fallback={<Spinner />}>

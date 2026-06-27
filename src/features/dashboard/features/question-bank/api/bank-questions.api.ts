@@ -3,9 +3,7 @@ import type { TApiResponse } from "@/validations/api-response.validation";
 import type { TQuestion } from "../types/question.types";
 
 export const getBankQuestions = async (id: string) => {
-	const { data } = await api.get<TApiResponse<{ questions: TQuestion[] }>>(
-		`api/dashboard/bank/${id}/questions`,
-	);
+	const { data } = await api.get<TApiResponse<TQuestion[]>>(`api/dashboard/bank/${id}/questions`);
 
 	return data;
 };

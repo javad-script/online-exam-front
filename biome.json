@@ -16,7 +16,7 @@
 
 	"overrides": [
 		{
-			"includes": ["./src/components/ui/*"],
+			"includes": ["./src/components/ui/*", "./src/components/reui/*"],
 			"linter": { "enabled": false },
 			"formatter": { "enabled": false }
 		}

@@ -1,5 +1,6 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
+import { queryClient } from "@/lib/react-query";
 
 type TAuth = {
 	token: string | null;
@@ -14,7 +15,10 @@ export const useAuth = create<TAuth>()(
 		(set) => ({
 			token: null,
 			setToken: (token: string) => set({ token }),
-			logout: () => set({ token: null }),
+			logout: () => {
+				set({ token: null });
+				queryClient.clear();
+			},
 			otpBlockExpireTime: null,
 			setOtpBlockExpireTime: (second: number) =>
 				set({ otpBlockExpireTime: new Date(Date.now() + 1000 * second) }),

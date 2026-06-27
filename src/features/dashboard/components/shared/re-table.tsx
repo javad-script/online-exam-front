@@ -8,7 +8,7 @@ import {
 	useReactTable,
 } from "@tanstack/react-table";
 import { ChevronDownIcon, SearchIcon } from "lucide-react";
-import { useState } from "react";
+import { type ReactNode, useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
 	DropdownMenu,
@@ -34,6 +34,7 @@ interface DataTableProps<TData, TValue> {
 
 type TableProps<TData, TValue> = DataTableProps<TData, TValue> & {
 	colHeaders: Record<string, string>;
+	emptyMessage?: ReactNode;
 	config?: {
 		pagination: boolean;
 		select: boolean;
@@ -42,13 +43,14 @@ type TableProps<TData, TValue> = DataTableProps<TData, TValue> & {
 	};
 };
 
-export function QuestionsTable<TData, TValue>({
+export function ReTable<TData, TValue>({
 	columns,
+	emptyMessage,
 	data,
 	colHeaders,
 	config = {
 		pagination: true,
-		select: true,
+		select: false,
 		visibility: true,
 		search: { enabled: true, placeholder: "", column: "" },
 	},
@@ -153,6 +155,7 @@ export function QuestionsTable<TData, TValue>({
 						{table.getRowModel().rows?.length ? (
 							table.getRowModel().rows.map((row) => (
 								<TableRow
+									// onClick={()=> navi}
 									className="h-12.25!"
 									data-state={row.getIsSelected() && "selected"}
 									key={row.id}
@@ -166,8 +169,8 @@ export function QuestionsTable<TData, TValue>({
 							))
 						) : (
 							<TableRow className="">
-								<TableCell className=" text-center h-" colSpan={columns.length}>
-									نتیجه ای یافت نشد
+								<TableCell className=" text-center " colSpan={columns.length}>
+									{emptyMessage}
 								</TableCell>
 							</TableRow>
 						)}

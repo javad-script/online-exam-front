@@ -1,7 +1,8 @@
 import type { RouteObject } from "react-router";
 import ProtectedRoute from "@/routes/protected-route";
-import QuestionBankSinglePage from "./features/question-bank/pages/question-bank.page";
-import QuestionBankPage from "./features/question-bank/pages/question-banks.page";
+import { examRoutes } from "./features/exam/routes";
+import { QuestionBankRoutes } from "./features/question-bank/routes";
+import { resultsRoutes } from "./features/results/routes";
 import DashboardLayout from "./layouts/dashboard-layout";
 import MainPage from "./pages/main-page";
 
@@ -16,18 +17,9 @@ export const dashboardRoutes: RouteObject[] = [
 						index: true,
 						element: <MainPage />,
 					},
-					{
-						path: "exams",
-						element: <div>exams</div>,
-					},
-					{
-						path: "question-bank",
-						element: <QuestionBankPage />,
-					},
-					{
-						path: "question-bank/:id",
-						element: <QuestionBankSinglePage />,
-					},
+					...examRoutes,
+					...resultsRoutes,
+					...QuestionBankRoutes,
 				],
 			},
 		],
