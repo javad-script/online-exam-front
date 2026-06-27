@@ -24,7 +24,7 @@ import {
 	DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Spinner } from "@/components/ui/spinner";
-import { ReTable } from "@/features/dashboard/components/shared/re-table";
+import { ReTable } from "@/features/dashboard/components/re-table";
 import { getExams } from "../api/exams.api";
 import { ExamDeleteModal } from "../components/exam-delete-modal";
 import type { TExam } from "../types/exam.types";

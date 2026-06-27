@@ -24,7 +24,7 @@ import {
 	DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Spinner } from "@/components/ui/spinner";
-import { ReTable } from "@/features/dashboard/components/shared/re-table";
+import { ReTable } from "@/features/dashboard/components/re-table";
 import { getQuestionBanks } from "../api/question-banks.api";
 import { DeleteBankModal } from "../components/question-bank-delete-modal";
 import type { TQuestionBank } from "../types/question-bank.types";
