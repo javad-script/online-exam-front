@@ -1,7 +1,7 @@
 import { api } from "@/lib/axios";
 import type { TApiResponse } from "@/validations/api-response.validation";
-import type { FormOutput } from "../pages/new-exam.page";
 import type { TExam } from "../types/exam.types";
+import type { FormOutput } from "../validations/new-exam.validation";
 
 export const getExams = async () => {
 	const { data } = await api.get<TApiResponse<TExam[]>>(`api/dashboard/exams`);

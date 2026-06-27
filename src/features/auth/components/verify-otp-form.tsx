@@ -2,7 +2,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
 import { AxiosError } from "axios";
 import { RefreshCcwIcon } from "lucide-react";
-import { useCallback, useEffect, useLayoutEffect, useRef, useTransition } from "react";
+import { useCallback, useEffect, useLayoutEffect, useRef, useState, useTransition } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router";
 import { toast } from "sonner";
@@ -24,7 +24,7 @@ export function VerifyOtpForm() {
 	const inputRef = useRef<HTMLInputElement>(null);
 	const navigate = useNavigate();
 	const mobile = sessionStorage.getItem("mobile");
-
+	const [submitTry, setSubmitTry] = useState(false);
 	const setOtpBlockExpireTime = useAuth((s) => s.setOtpBlockExpireTime);
 	const setToken = useAuth((s) => s.setToken);
 	const expiresAt = useAuth((s) => s.otpBlockExpireTime);
@@ -72,7 +72,7 @@ export function VerifyOtpForm() {
 		mutationFn: verifyOtpApi,
 		onSuccess: (data) => {
 			handleResetForm();
-			if (!data.success) {
+			if (!data.success || !data.data) {
 				toast.error(data.message);
 				return;
 			}
@@ -109,10 +109,11 @@ export function VerifyOtpForm() {
 	// ۴. ارسال خودکار به محض تکمیل ۴ رقم
 	const code = watch("code");
 	useEffect(() => {
-		if (code?.length === 4) {
+		if (code?.length === 4 && !submitTry) {
 			handleSubmit(onSubmit)();
+			setSubmitTry(true);
 		}
-	}, [code, handleSubmit, onSubmit]);
+	}, [code, handleSubmit, onSubmit, submitTry]);
 
 	if (!mobile) return null;
 

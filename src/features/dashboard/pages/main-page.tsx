@@ -15,6 +15,7 @@ import colors from "tailwindcss/colors";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import type { ChartConfig } from "@/components/ui/chart";
 import { ChartPieDonutText } from "../components/chart-pie-donut-text";
 import { GradingTable } from "../components/exams-list";
 
@@ -264,7 +265,7 @@ function StatDonutCard({
 	title: string;
 	icon: React.ReactNode;
 	accentClass?: string;
-	config: Record<string, unknown>;
+	config: ChartConfig;
 	data: TChartData;
 	label: string;
 	href: string;
